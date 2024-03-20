@@ -15,7 +15,7 @@ namespace LinuxInputs.Inputs
 
         private static FileSystemWatcher _devicesWatcher;
         private static object _lock = new object();
-        private static Dictionary<string, bool> _listenedDevices = new Dictionary<string, bool>();
+        private static HashSet<string> _listenedDevices = new ();
         private static Timer _checkDevicesDebounceTimer;
 
         public static event EventHandler<InputKeyEventCode> OnKeyDown;
@@ -91,12 +91,12 @@ namespace LinuxInputs.Inputs
         {
             lock(_lock)
             {
-                if (_listenedDevices.ContainsKey(dev))
+                if (_listenedDevices.Contains(dev))
                 {
                     return;
                 }
 
-                _listenedDevices.Add(dev, true);
+                _listenedDevices.Add(dev);
             }
 
             Task.Run(() =>
